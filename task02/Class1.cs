@@ -1,9 +1,9 @@
 ﻿namespace task02;
 public class Student
 {
-    public string Name { get; set; }
-    public string Faculty { get; set; }
-    public List<int> Grades { get; set; }
+    public string Name { get; set; } = null!;
+    public string Faculty { get; set; } = null!;
+    public List<int> Grades { get; set; } = null!;
 }
 public class StudentService
 {
