@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\task01\task01.csproj" />
+    <ProjectReference Include="..\task02\task02.csproj" />
   </ItemGroup>
 
 </Project>
