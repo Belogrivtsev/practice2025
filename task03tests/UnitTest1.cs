@@ -1,8 +1,8 @@
 namespace task03tests;
+
 using task03;
 using Xunit;
 using Moq;
-
 public class IteratorTests
 {
     [Fact]
