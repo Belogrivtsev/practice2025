@@ -1,5 +1,4 @@
 ﻿namespace task03;
-
 public class CustomCollection<T> : IEnumerable<T>
 {
     private readonly List<T> _items = new();
