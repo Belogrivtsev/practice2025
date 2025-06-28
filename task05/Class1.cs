@@ -22,7 +22,7 @@ namespace task05
         {
             if (string.IsNullOrWhiteSpace(methodName)) { return Enumerable.Empty<string>(); }
             var method = _type.GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-            if (method == null) {return Enumerable.Empty<string>();}
+            if (method == null) { return Enumerable.Empty<string>(); }
             return method.GetParameters().Select(p => p.Name ?? string.Empty).Where(name => !string.IsNullOrEmpty(name));
         }
 

@@ -7,9 +7,9 @@ namespace task05tests
     public class TestClass
     {
         public int PublicField;
-         #pragma warning disable CS0169
+#pragma warning disable CS0169
         private string? _privateField;
-         #pragma warning restore CS0169
+#pragma warning restore CS0169
         public int Property { get; set; }
 
         public void Method() { }
