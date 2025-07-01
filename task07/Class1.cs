@@ -39,18 +39,13 @@ public static class ReflectionHelper
         if (version != null) { Console.WriteLine($"Class version: {version.Major}.{version.Minor}"); }
 
         Console.WriteLine("Methods of the class:\n");
-        foreach (var m in type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
-        {
-            var method = m.GetCustomAttribute<DisplayNameAttribute>();
-            if (method != null) { Console.WriteLine($"{m.Name}, description: {method.DisplayName}"); }
-        }
+        Array.ForEach(type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly), 
+        m => {var method = m.GetCustomAttribute<DisplayNameAttribute>();
+        if (method != null) Console.WriteLine($"{m.Name}, description: {method.DisplayName}"); });
 
         Console.WriteLine("Properities:\n");
-        foreach (var p in type.GetProperties())
-        {
-            var property = p.GetCustomAttribute<DisplayNameAttribute>();
-            if (property != null) { Console.WriteLine($"{p.Name}, description: {property.DisplayName}"); }
-        }
+        Array.ForEach(type.GetProperties(), p => {var property = p.GetCustomAttribute<DisplayNameAttribute>();
+        if (property != null) Console.WriteLine($"{p.Name}, description: {property.DisplayName}"); } );
     }
 
 }
