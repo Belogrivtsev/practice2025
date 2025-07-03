@@ -33,7 +33,7 @@ public class FindFilesCommand : ICommand
     {
         if (!Directory.Exists(DirectoryPath)) { throw new DirectoryNotFoundException($"Directory {DirectoryPath} not found"); }
         var files = Directory.GetFiles(DirectoryPath, SearchPattern);
-        Console.WriteLine($"Found {files.Length} files:"); 
+        Console.WriteLine($"Found {files.Length} files:");
         Array.ForEach(files, f => Console.WriteLine(Path.GetFileName(f)));
     }
 }
