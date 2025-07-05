@@ -4,5 +4,5 @@ namespace TestPlugin;
 [PluginLoad]
 public class TestPlugin
 {
-    public void Execute() { Console.WriteLine("This plugin is used"); }
+    public void Execute() { Console.WriteLine("Plugin 'TestPlugin' is used"); }
 }
