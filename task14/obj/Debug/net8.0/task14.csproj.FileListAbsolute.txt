@@ -1,0 +1,12 @@
+D:\educationalPractice\task14\obj\Debug\net8.0\task14.GeneratedMSBuildEditorConfig.editorconfig
+D:\educationalPractice\task14\obj\Debug\net8.0\task14.AssemblyInfoInputs.cache
+D:\educationalPractice\task14\obj\Debug\net8.0\task14.AssemblyInfo.cs
+D:\educationalPractice\task14\obj\Debug\net8.0\task14.csproj.CoreCompileInputs.cache
+D:\educationalPractice\task14\obj\Debug\net8.0\task14.sourcelink.json
+D:\educationalPractice\task14\bin\Debug\net8.0\task14.deps.json
+D:\educationalPractice\task14\bin\Debug\net8.0\task14.dll
+D:\educationalPractice\task14\bin\Debug\net8.0\task14.pdb
+D:\educationalPractice\task14\obj\Debug\net8.0\task14.dll
+D:\educationalPractice\task14\obj\Debug\net8.0\refint\task14.dll
+D:\educationalPractice\task14\obj\Debug\net8.0\task14.pdb
+D:\educationalPractice\task14\obj\Debug\net8.0\ref\task14.dll
