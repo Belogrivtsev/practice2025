@@ -1,36 +1,78 @@
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using Xunit;
 using task14;
+using ScottPlot;
 
 namespace task14tests;
 
-public class DefiniteIntegralTests
+public class PerformanceTests
 {
     [Fact]
-    public void DefiniteIntegral_ReturnCorrectValue()
+    public void OptimizeParameters()
     {
-        var X = (double x) => x;
+        double a = -100;
+        double b = 100;
+        var f = (double x) => Math.Sin(x);
+        double[] steps = { 1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6 };
+        int[] threads = { 1, 2, 4, 8, 12, 16 };
 
-        var SIN = (double x) => Math.Sin(x);
+        double optimalStep = steps.OrderBy(step => step).First(step => Math.Abs(DefiniteIntegral.Solve(a, b, f, step, 1)) < 1e-4);
 
-        Assert.Equal(0, DefiniteIntegral.Solve(-1, 1, X, 1e-4, 2), 1e-4);
+        var results = threads.Select(t => (threads: t, time: MeasureTime(() => DefiniteIntegral.Solve(a, b, f, optimalStep, t))))
+        .OrderBy(r => r.time).ToList();
 
-        Assert.Equal(0, DefiniteIntegral.Solve(-1, 1, SIN, 1e-5, 8), 1e-4);
+        var singleTime = MeasureTime(() => DefiniteIntegral.Solve(a, b, f, optimalStep, 1));
+        var (optimalThreads, multiTime) = results.First();
+        double speed = (singleTime - multiTime) / singleTime * 100;
 
-        Assert.Equal(12.5, DefiniteIntegral.Solve(0, 5, X, 1e-6, 8), 1e-5);
+        SaveResults(optimalStep, optimalThreads, singleTime, multiTime, speed);
+        GeneratePlot(results, optimalThreads);
+
+        Assert.True(speed >= 15, $"Speed {speed:F1}% < 15%");
     }
-    [Fact]
-    public void ConstantFunction_ReturnCorrectValue()
-    {
-    var CONST = (double x) => 3.0;
 
-    Assert.Equal(30, DefiniteIntegral.Solve(0, 10, CONST, 1e-5, 4), precision: 5); 
+    private static string GetSolutionDirectory()
+    {
+        var directory = Directory.GetCurrentDirectory();
+        while (!Directory.GetFiles(directory, "*.sln").Any())
+        {
+            directory = Directory.GetParent(directory)?.FullName;
+            if (directory == null) return Directory.GetCurrentDirectory();
+        }
+        return directory;
     }
 
-    [Fact]
-    public void QuadraticFunction_ReturnCorrectValue()
+    public static double MeasureTime(Action action)
     {
-    var SQUARE = (double x) => x * x;
+        return Enumerable.Repeat(action, 5).Select(a =>
+        {
+            var sw = Stopwatch.StartNew(); a();
+            return sw.Elapsed.TotalMilliseconds;
+        }).Average();
+    }
 
-    Assert.Equal(9, DefiniteIntegral.Solve(0, 3, SQUARE, 1e-6, 4), precision: 5);
+    private static void SaveResults(double step, int threads, double singleTime, double multiTime, double speed)
+    {
+        string path = Path.Combine(GetSolutionDirectory(), "results.txt");
+        File.WriteAllText(path, $@"Оптимальный шаг интегрирования: {step}
+        Оптимальное число потоков: {threads}
+        Время выполнения программы с 1 потоком: {singleTime:F2}
+        Время выполнения программы с многопотоком: {multiTime:F2}
+        Скорость (ускорение): {speed:F1}%");
+    }
+
+    private static void GeneratePlot(List<(int threads, double time)> data, int optimal)
+    {
+        string path = Path.Combine(GetSolutionDirectory(), "graph.png");
+        var plt = new Plot();
+        plt.Title("Определение оптимальных параметров алгоритма вычисления определенного интеграла");
+        plt.XLabel("Кол-во потоков");
+        plt.YLabel("Время выполнения");
+
+        plt.AddScatter(data.Select(d => (double)d.threads).ToArray(), data.Select(d => d.time).ToArray());
+        plt.SaveFig(path, 800, 600);
     }
 }

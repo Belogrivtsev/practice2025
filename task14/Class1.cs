@@ -1,44 +1,44 @@
 ﻿using System;
-using System.Threading;
 using System.Linq;
+using System.Threading;
 
 namespace task14;
-
-public class DefiniteIntegral
+public static class DefiniteIntegral
 {
     public static object _lock = new object();
 
-    public static double Solve(double a, double b, Func<double, double> function, double step, int threadsNumber)
+    public static double Solve(double a, double b, Func<double, double> f, double step, int threadsNumber)
     {
-        if (threadsNumber <= 0) throw new ArgumentException("Threads number must be > 0");
-        if (a >= b) throw new ArgumentException("Invalid interval: a must be less than b");
+        return threadsNumber <= 0 ? throw new ArgumentException("threads must be > 0") :
+        a >= b ? throw new ArgumentException("a must be less than b") : CalculateIntegralWithThreads(a, b, f, step, threadsNumber);
+    }
 
+    public static double CalculateIntegralWithThreads(double a, double b, Func<double, double> f, double step, int threadsNumber)
+    {
         double total = 0.0;
-        double intervalLength = (b - a) / threadsNumber;
+        double length = (b - a) / threadsNumber;
         using var barrier = new Barrier(threadsNumber + 1);
-
-        var threads = Enumerable.Range(0, threadsNumber).Select(i => {double start = a + i * intervalLength;
-        double end = (i == threadsNumber - 1) ? b : start + intervalLength;
-        return new Thread(() => 
+        var threads = Enumerable.Range(0, threadsNumber).Select(i => new Thread(() =>
             {
-                double partialSum = CalculateIntegral(start, end, function, step);
-                lock (_lock) total += partialSum; 
+                double start = a + i * length;
+                double end = (i == threadsNumber - 1) ? b : start + length;
+                double sum = CalculateIntegral(f, start, end, step);
+                lock (_lock) total += sum;
                 barrier.SignalAndWait();
-            });}).ToArray();
-
+            })).ToArray();
         Array.ForEach(threads, t => t.Start());
         barrier.SignalAndWait();
-
         return total;
     }
 
-    public static double CalculateIntegral(double a, double b, Func<double, double> function, double step)
+    public static double CalculateIntegral(Func<double, double> f, double a, double b, double step)
     {
         int steps = (int)Math.Ceiling((b - a) / step);
-        return Enumerable.Range(0, steps).Select(k => a + k * step).Aggregate(0.0, (sum, x) => 
-            {
-                double xNext = Math.Min(x + step, b);
-                return sum + (function(x) + function(xNext)) * (xNext - x) / 2;
-            });
+        return Enumerable.Range(0, steps).Select(k =>
+        {
+            double x = a + k * step; double xNext = Math.Min(x + step, b);
+            return (f(x) + f(xNext)) * (xNext - x) / 2;
+        }).Sum();
     }
 }
+
