@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Commands\Commands.csproj" />
+    <ProjectReference Include="..\task18\task18.csproj" />
   </ItemGroup>
 
 </Project>
