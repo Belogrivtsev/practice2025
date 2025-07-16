@@ -76,11 +76,11 @@ public class LongRunningCommand : ICommand
 }
 public class ServerThread : IDisposable
 {
-    private readonly BlockingCollection<ICommand> commandsQueue = new BlockingCollection<ICommand>();
-    private readonly IScheduler Scheduler;
-    private volatile bool flag;
-    private Thread? workThread;
-    private readonly CancellationTokenSource cts = new CancellationTokenSource();
+    public BlockingCollection<ICommand> commandsQueue = new BlockingCollection<ICommand>();
+    public IScheduler Scheduler;
+    public volatile bool flag;
+    public Thread? workThread;
+    public CancellationTokenSource cts = new CancellationTokenSource();
 
     public ServerThread(IScheduler scheduler)
     {
@@ -126,16 +126,12 @@ public class ServerThread : IDisposable
 
     public void RemoveCompletedCommand(ICommand command)
     {
-        if (Scheduler is RoundRobinScheduler roundRobinScheduler) 
-        { 
-            roundRobinScheduler.Remove(command); 
-        }
+        if (Scheduler is RoundRobinScheduler roundRobinScheduler) { roundRobinScheduler.Remove(command); }
     }
 
     public void AddCommand(ICommand command)
     {
-        if (!flag) 
-            throw new InvalidOperationException("ServerThread not running");
+        if (!flag) { throw new InvalidOperationException("ServerThread not running"); }
         
         commandsQueue.Add(command);
     }
